@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manage Users</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+@import url('https://fonts.googleapis.com/css2?family=Clicker+Script&family=Poppins:wght@100;200;300;400;500;600;700;800;900&display=swap');
+
+        /* Base styling */
+        body {
+            font-family: 'Poppins', sans-serif;
+            background-color: #f4f4f9;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            min-height: 100vh;
+        }
+
+        /* Navigation styling */
+        nav {
+            width: 100%;
+            background-color: #ffffff;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            padding: 15px 0;
+        }
+
+        .nav-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo span {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: #03f554;
+        }
+
+        .links a {
+            margin: 0 10px;
+            color: #333;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+
+        .links a:hover {
+            color: #00ff40;
+        }
+
+        .hamburg {
+            position: relative;
+        }
+
+        .hamburg-dropdown {
+            display: none;
+            position: absolute;
+            top: 100%;
+            right: 0;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            padding: 10px;
+        }
+
+        .hamburg:hover .hamburg-dropdown {
+            display: block;
+        }
+
+        .hamburg-dropdown a {
+            display: block;
+            padding: 8px;
+            color: #333;
+            text-decoration: none;
+            font-size: 0.9rem;
+            transition: background-color 0.3s;
+        }
+
+        .hamburg-dropdown a:hover {
+            background-color: #f4f4f9;
+        }
+
+        /* Container styling */
+        .main-container {
+            width: 90%;
+            max-width: 1200px;
+            margin: 20px auto;
+            padding: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        h2 {
+            text-align: center;
+            color: #333;
+            margin-bottom: 20px;
+        }
+
+        /* Table styling */
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+            background-color: #ffffff;
+            border-radius: 8px;
+            overflow: hidden;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: left;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        th {
+            background-color: #03f554;
+            color: #ffffff;
+            font-weight: bold;
+            text-transform: uppercase;
+            font-size: 0.9rem;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f9f9f9;
+        }
+
+        tr:hover {
+            background-color: #e0e7ff;
+            cursor: pointer;
+        }
+
+        a {
+            color: #00ff40;
+            font-weight: 500;
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        a:hover {
+            color: #00ff40;
+            text-decoration: underline;
+        }
+
+        table, th, td {
+            border: 1px solid #ddd;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        /* Responsive styling */
+        @media (max-width: 768px) {
+            .main-container {
+                width: 95%;
+            }
+
+            .nav-container {
+                flex-direction: column;
+                align-items: flex-start;
+            }
+
+            .links {
+                margin-top: 10px;
+            }
+
+            th, td {
+                font-size: 0.85rem;
+                padding: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav>
+        <div class="nav-container">
+            <div class="logo">
+                <span>Admin Panel</span>
+            </div>
+            <div class="links">
+                <a href="admindash.html">Dashboard</a>
+                <a href="post_module_form.html">Post Module</a>
+                <a href="manage_users.html">Manage Users</a>
+                <a href="admin_report_history.html">History</a>
+                <a href="logout.html">Log Out</a>
+            </div>
+        </div>
+    </nav>
+    <div class="main-container">
+        <div class="content">
+            <h2>User Management</h2>
+            <table id="userTable">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Full Name</th>
+                        <th>Username</th>
+                        <th>Role</th>
+                        <th>Action</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- User rows will be dynamically added here -->
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+    <script>
+        // Function to load users
+        function loadUsers() {
+            fetch('get_users.php')
+            .then(response => response.json())
+            .then(data => {
+                const userTable = document.getElementById('userTable').getElementsByTagName('tbody')[0];
+                userTable.innerHTML = '';  // Clear the table body
+
+                data.forEach(user => {
+                    const row = userTable.insertRow();
+                    row.insertCell(0).textContent = user.id;
+                    row.insertCell(1).textContent = user.fullName;
+                    row.insertCell(2).textContent = user.username;
+                    row.insertCell(3).textContent = user.role;
+
+                    // Add delete button
+                    const deleteBtn = document.createElement('button');
+                    deleteBtn.textContent = 'Delete';
+                    deleteBtn.classList.add('button');
+                    deleteBtn.onclick = () => deleteUser(user.id);
+
+                    row.insertCell(4).appendChild(deleteBtn);
+                });
+            })
+            .catch(error => console.error('Error fetching users:', error));
+        }
+
+        // Function to delete user
+        function deleteUser(id) {
+            if (confirm('Are you sure you want to delete this user?')) {
+                fetch('delete_users.php', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/x-www-form-urlencoded',
+                    },
+                    body: new URLSearchParams({ id })
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.success) {
+                        alert(data.message);
+                        loadUsers(); // Reload the user table
+                    } else {
+                        alert(data.message);
+                    }
+                })
+                .catch(error => console.error('Error deleting user:', error));
+            }
+        }
+
+        // Load users on page load
+        window.onload = loadUsers;
+    </script>
+</body>
+</html>
